@@ -10,23 +10,7 @@ import java.util.Random;
  */
 public class Rabbit extends Animal
 {
-    // Characteristics shared by all rabbits (class variables).
 
-    // The age at which a rabbit can start to breed.
-    private static final int BREEDING_AGE = 5;
-    // The age to which a rabbit can live.
-    private static final int MAX_AGE = 40;
-    // The likelihood of a rabbit breeding.
-    private static final double BREEDING_PROBABILITY = 0.12;
-    // The maximum number of births.
-    private static final int MAX_LITTER_SIZE = 4;
-    // A shared random number generator to control breeding.
-    private static final Random rand = Randomizer.getRandom();
-    
-    // Individual characteristics (instance fields).
-    
-    // The rabbit's age.
-    private int age;
 
     /**
      * Create a new rabbit. A rabbit may be created with age
@@ -36,9 +20,9 @@ public class Rabbit extends Animal
      * @param field The field currently occupied.
      * @param location The location within the field.
      */
-    public Rabbit(boolean randomAge, Field field, Location location)
+    public Rabbit(boolean randomAge, Field field, Location location, Gender gender)
     {
-        super(field, location);
+        super(field, location, gender);
         age = 0;
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
