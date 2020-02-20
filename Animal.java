@@ -8,130 +8,185 @@ import java.util.Random;
  * @author David J. Barnes and Michael Kölling
  * @version 2016.02.29 (2)
  */
-public class Animal extends Actor
+public abstract class Animal implements Actor
 {
-    // Characteristics shared by all animals (class variables).
-
-    // The age at which a animal can start to breed.
-    public static int BREEDING_AGE;
-    // The age to which a animal can live.
-    public static int MAX_AGE;
-    // The likelihood of a animal breeding.
-    public static double BREEDING_PROBABILITY;
-    // The maximum number of births.
-    public static int MAX_LITTER_SIZE;
-    // A shared random number generator to control breeding.
-    public static Random rand = Randomizer.getRandom();
-    //The gender of the animal
-    public Gender gender;
-    public static enum Gender {
-        MALE, FEMALE
-    };
-    
-    
-    // Individual characteristics (instance fields).
-    
-    // The animal's age.
+    //whether the animal is alive or not
+    private boolean alive;
+    // The animal's field
+    private Field field;
+    // The animal's position in the field.
+    private Location location;
+    //the animals age
     private int age;
-
+    // the animals food level which is incremented by eating.
+    private int foodLevel;
+    // A shared number generator to control the animal's breeding.
+    private static final Random rand = Randomizer.getRandom();
+    
     /**
-     * Create a new animal. A animal may be created with age
-     * zero (a new born) or with a random age.
+     * Create a new animal at location in field.
      * 
-     * @param randomAge If true, the animal will have a random age.
      * @param field The field currently occupied.
      * @param location The location within the field.
      */
-    public Animal(boolean randomAge, Field field, Location location, Gender gender)
+    public Animal(Field field, Location location)
     {
-        super(field, location);
-        age = 0;
-        this.gender = gender;
-        if(randomAge) {
-            age = rand.nextInt(MAX_AGE);
+        alive = true;
+        this.field = field;
+        setLocation(location);
+    }
+    
+    /**
+     * Make this animal act - that is: make it do
+     * whatever it wants/needs to do.
+     * @param newAnimals A list to receive newly born animals.
+     */
+    public abstract void act(List<Actor> newAnimals);
+    
+    /**
+     * Check whether the animal is alive or not.
+     * @return true if the animal is still alive.
+     */
+    public boolean isAlive()
+    {
+        return alive;
+    }
+    
+    /**
+     * Indicate that the animal is no longer alive.
+     * It is removed from the field.
+     */
+    protected void setDead()
+    {
+        alive = false;
+        if(location != null) {
+            field.clear(location);
+            location = null;
+            field = null;
         }
     }
     
     /**
-     * This is what the animal does most of the time - it runs 
-     * around. Sometimes it will breed or die of old age.
-     * @param newAnimals A list to return newly born animals.
+     * increase the age which could result in the animal's death.
      */
-    public void act(List<Actor> newAnimals)
+    protected void incrementAge()
     {
-        incrementAge();
-        if(isAlive()) {
-            giveBirth(newAnimals);            
-            // Try to move into a free location.
-            Location newLocation = getField().freeAdjacentLocation(getLocation());
-            if(newLocation != null) {
-                setLocation(newLocation);
-            }
-            else {
-                // Overcrowding.
-                setDead();
-            }
-        }
-    }
-
-    /**
-     * Increase the age.
-     * This could result in the animal's death.
-     */
-    private void incrementAge()
-    {
-        age++;
-        if(age > MAX_AGE) {
-            setDead();
+        setAge(getAge() +1);
+        if (getAge() > getMaxAge()) {
+            setDead(); 
         }
     }
     
     /**
-     * Check whether or not this animal is to give birth at this step.
-     * New births will be made into free adjacent locations.
-     * @param newAnimals A list to return newly born animals.
+     * returns the maximum age of an animal
+     * @return the maximum age of an animal
      */
-    private void giveBirth(List<Actor> newAnimals)
+    protected abstract int getMaxAge();
+    
+    /**
+     * return the animal's location
+     * @return the animals location.
+     */
+    protected Location getLocation()
     {
-        // New animals are born into adjacent locations.
-        // Get a list of adjacent free locations.
-        Field field = getField();
-        List<Location> free = field.getFreeAdjacentLocations(getLocation());
-        int births = breed();
-        for(int b = 0; b < births && free.size() > 0; b++) {
-            Location loc = free.remove(0);
-            
-            Animal young = new Animal(false, field, loc, gender);
-            newAnimals.add(young);
-        }
+        return location;
     }
-        
+    
+    /**
+     * Place the animal at the new location in the given field.
+     * @param newLocation The animal's new location.
+     */
+    public void setLocation(Location newLocation)
+    {
+        if(location != null) {
+            field.clear(location);
+        }
+        location = newLocation;
+        field.place(this, newLocation);
+    }
+    
+    /**
+     * Return the animal's field.
+     * @return The animal's field.
+     */
+    protected Field getField()
+    {
+        return field;
+    }
+    
     /**
      * Generate a number representing the number of births,
      * if it can breed.
      * @return The number of births (may be zero).
      */
-    private int breed()
+    protected int breed()
     {
         int births = 0;
-        if(canBreed() && rand.nextDouble() <= BREEDING_PROBABILITY) {
-            births = rand.nextInt(MAX_LITTER_SIZE) + 1;
+        if(canBreed() && getRandom().nextDouble() <= getBreedingProbability()) {
+            births = getRandom().nextInt(getMaxLitterSize()) + 1;
         }
         return births;
     }
-
+    
     /**
-     * A animal can breed if it has reached the breeding age.
-     * @return true if the animal can breed, false otherwise.
+     * An animal can breed if it has reached the breeding age.
+     * @return true if the animal can breed false otherwise.
      */
-    private boolean canBreed()
+    protected abstract boolean canBreed();
+    
+    /**
+     * returns the animals current age
+     * @return age int the current age of the animal.
+     */
+    protected int getAge()
     {
-        return age >= BREEDING_AGE;
+        return age;
     }
     
-    // randomizes the gender of a New animal 
-    private Gender getGender() 
+    /**
+     * set an animals current age.
+     * @param age int set the current age
+     */
+    protected void setAge(int age)
     {
-        return gender; 
+        this.age = age;
     }
+    
+    /**
+     * reurns the animals current foodlevel
+     * @param foodlevel int set the current foodlevel
+     */
+    protected int getFoodLevel()
+    {
+        return foodLevel;
+    }
+    
+    /**
+     * set an animals current foodLevel.
+     * @param foodLevel int set the current foodLevel.
+     */
+    protected void setFoodLevel(int foodLevel)
+    {
+        this.foodLevel = foodLevel;
+    }
+    
+    protected Random getRandom()
+    {
+        return rand;
+    }
+    
+    /**
+     * get Max Litter Size
+     * @return Maxlittersize
+     */
+    protected abstract int getMaxLitterSize();
+    
+    /**
+     * get breeding probability
+     * @return breeding probability
+     */
+    protected abstract double getBreedingProbability();
+    
+   
+    
 }
