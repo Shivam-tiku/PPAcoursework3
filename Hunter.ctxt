@@ -1,0 +1,22 @@
+#BlueJ class context
+comment0.target=Hunter
+comment0.text=\n\ \n\ A\ class\ representing\ shared\ characteristics\ of\ hunters.\n\ A\ simple\ model\ of\ a\ hunter\n\ Hunters\ move\ and\ shoot.\n
+comment1.params=field\ newLocation
+comment1.target=Hunter(Field,\ Location)
+comment1.text=\n\ Create\ a\ hunter.\ \n\ @param\ field\ The\ field\ currently\ occupied.\n\ @param\ location\ The\ location\ within\ the\ field.\n
+comment2.params=newHunters
+comment2.target=void\ act(java.util.List)
+comment2.text=\n\ This\ is\ what\ the\ wolf\ does\ most\ of\ the\ time\:\ it\ hunts\ for\n\ rabbits.\ In\ the\ process,\ it\ might\ breed,\ die\ of\ hunger,\n\ or\ die\ of\ old\ age.\n\ @param\ field\ The\ field\ currently\ occupied.\n\ @param\ newwolfs\ A\ list\ to\ return\ newly\ born\ wolfs.\n
+comment3.params=
+comment3.target=Location\ findTarget()
+comment3.text=\n\ Look\ for\ an\ animal\ adjacent\ to\ the\ current\ location.\n\ Only\ the\ first\ live\ animal\ is\ shoot.\n\ @return\ Where\ an\ animal\ is\ found,\ or\ null\ if\ it\ wasn't.\n
+comment4.params=
+comment4.target=Location\ getLocation()
+comment4.text=\n\ Return\ the\ hunter's\ location.\n\ @return\ The\ hunter's\ location.\n
+comment5.params=newLocation
+comment5.target=void\ setLocation(Location)
+comment5.text=\n\ Place\ the\ hunter\ at\ the\ new\ location\ in\ the\ given\ field.\n\ @param\ newLocation\ The\ hunter's\ new\ location.\n
+comment6.params=
+comment6.target=Field\ getField()
+comment6.text=\n\ Return\ the\ hunter's\ field.\n\ @return\ Field\ the\ hunter's\ field.\n
+numComments=7

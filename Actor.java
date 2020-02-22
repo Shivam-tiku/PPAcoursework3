@@ -1,4 +1,7 @@
 import java.util.List;
+import java.util.Random;
+import java.util.Iterator;
+
 
 /**
  * A class representing shared characteristics of actors.
@@ -8,18 +11,23 @@ import java.util.List;
  */
 public abstract class Actor
 {
-    // Whether the actor is alive or not.
+    // Whether the animal is alive or not.
     private boolean alive;
-    // The actor's field.
-    private Field field;
-    // The actor's position in the field.
-    private Location location;
+    // Whether the animal is alive or not.
+    protected int age;
     
+    // The animal's field.
+    private Field field;
+    // The animal's position in the field.
+    protected Location location;
+    
+    private static final Random rand = Randomizer.getRandom();
     /**
-     * Create a new actor at location in field.
+     * Contstructor for the abstract class Actor;
+     * create a new actor at a location in the field
      * 
-     * @param field The field currently occupied.
-     * @param location The location within the field.
+     * @param field the field currently occupied
+     * @param location the location within the field.
      */
     public Actor(Field field, Location location)
     {
@@ -29,23 +37,21 @@ public abstract class Actor
     }
     
     /**
-     * Make this actor act - that is: make it do
-     * whatever it wants/needs to do.
-     * @param newActors A list to receive newly born actors.
+     * returns the age to which an animal can live.
+     * @return int the max age of an animal
      */
-    abstract public void act(List<Actor> newActors);
-
+    protected abstract int getMAX_AGE();
+    
     /**
-     * Check whether the actor is alive or not.
-     * @return true if the actor is still alive.
+     * check whether the animal is alive or not.
+     * @return true if the animal is still alive.
      */
-    protected boolean isAlive()
-    {
-        return alive;
+    protected boolean isAlive () {
+        return alive; 
     }
-
+    
     /**
-     * Indicate that the actor is no longer alive.
+     * Indicate that the animal is no longer alive.
      * It is removed from the field.
      */
     protected void setDead()
@@ -57,10 +63,17 @@ public abstract class Actor
             field = null;
         }
     }
-
+    
     /**
-     * Return the actor's location.
-     * @return The actor's location.
+     *  make this animal act - that is: make it do
+     *  whatever it wants/needs to do.
+     *  @param newAnimals A list to recieve newly born animals.
+     */
+    abstract public void act (List <Actor> newActors);
+    
+    /**
+     * Return the animal's location.
+     * @return The animal's location.
      */
     protected Location getLocation()
     {
@@ -68,8 +81,8 @@ public abstract class Actor
     }
     
     /**
-     * Place the actor at the new location in the given field.
-     * @param newLocation The actor's new location.
+     * Place the animal at the new location in the given field.
+     * @param newLocation The animal's new location.
      */
     protected void setLocation(Location newLocation)
     {
@@ -81,11 +94,26 @@ public abstract class Actor
     }
     
     /**
-     * Return the actor's field.
-     * @return The actor's field.
+     * return the animal's field.
+     * @return the animal's field
      */
     protected Field getField()
     {
         return field;
     }
+    
+    /**
+     * Increase the age.
+     * This could result in the rabbit's death.
+     */
+    protected void incrementAge()
+    {
+        age++;
+        if(age > getMAX_AGE()) {
+            setDead();
+        }
+    }
+    
+    
+    
 }

@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=Edible
+comment0.text=\n\ Actors\ that\ are\ edible.\n\n\ \n
+comment1.params=
+comment1.target=int\ getFOOD_VALUE()
+comment1.text=\n\ All\ edible\ actors\ have\ a\ food\ value.\n\ That\ is,\ the\ nutritional\ content\ they\ provide\ when\ eaten.\n\n\ @return\ food\ value\ of\ actor\ when\ eaten.\n
+numComments=2

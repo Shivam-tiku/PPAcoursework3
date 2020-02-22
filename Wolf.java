@@ -1,44 +1,43 @@
 import java.util.List;
-import java.util.Iterator;
 import java.util.Random;
-
-
+import java.util.Iterator;
 /**
- * A simple model of a fox.
- * Foxes age, move, eat foxs, and die.
+ * A simple model of a wolf
+ * wolves age, move, eat fox and rabbits and die.
+ *
+ * @author (your name)
+ * @version (a version number or a date)
  */
-public class Fox extends Predator
+public class Wolf extends Predator
 {
-    // Characteristics shared by all foxs (class variables).
+    // Characteristics shared by all Wolves (class variables).
 
-    // The age at which a fox can start to breed.
+    // The age at which a wolf can start to breed.
     private static int BREEDING_AGE = 15;
-    // The age to which a fox can live.
+    // The age to which a wolf can live.
     private static int MAX_AGE = 150;
-    // The likelihood of a fox breeding.
-    private static double BREEDING_PROBABILITY = 0.4;
+    // The likelihood of a wolf breeding.
+    private static double BREEDING_PROBABILITY = 0.8;
     // The maximum number of births.
     private static int MAX_LITTER_SIZE = 2;
-    // This is the number of steps a fox can go before it has to eat at the begining.
+    // This is the number of steps a wolf can go before it has to eat at the begining.
     private static final int INITIAL_HUNGER_VALUE = 13;
     
-    // This is the food level after which a fox cannot eat.
-    private static final int MAX_FOOD_LEVEL = 26;
+    // This is the food level after which a wolf cannot eat.
+    private static final int MAX_FOOD_LEVEL = 30;
     
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     
-    
-    
     /**
-     * Create a fox. A fox can be created as a new born (age zero
+     * Create a wolf. A wolf can be created as a new born (age zero
      * and not hungry) or with a random age and food level.
      * 
-     * @param randomAge If true, the fox will have random age and hunger level.
+     * @param randomAge If true, the wolf will have random age and hunger level.
      * @param field The field currently occupied.
      * @param location The location within the field.
      */
-    public Fox(boolean randomAge, Field field, Location location)
+    public Wolf(boolean randomAge, Field field, Location location)
     {
         super(field, location);
         
@@ -54,51 +53,29 @@ public class Fox extends Predator
     }
     
     /**
-     * Creates a new Fox object.
-     * @param randomAge If true, the Fox will have random age and hunger level.
+     * Creates a new Wolf object.
+     * @param randomAge If true, the Wolf will have random age and hunger level.
      * @param field The field currently occupied.
      * @param location The location within the field.
-     * @return animal of type Fox
+     * @return animal of type Wolf
      */
     protected Animal getNewAnimal(boolean randomAge, Field field, Location loc)
     {
         Animal young;
-        return young = new Fox(false, field, loc);
+        return young = new Wolf(false, field, loc);
     }
     
     /**
-     * Fox can only eat rabbits and mice.
-     * Checks if location contains rabbits or mice.
-     * @param location.
-     * @return Edible object containing rabbit or mouse if in the location.
+     * Wolf sleeps between 0 and 6 hours.
+     * @param current time.
+     * @return true false if the WOlf is sleeping.
      */
-    protected Edible getEdible(Location where)
+    protected boolean isNotAsleep(int time)
     {
-      Object animal = getField().getObjectAt(where);
-      Edible prey = null;
-      if(animal instanceof Rabbit)
-      {
-          prey = (Rabbit) animal;
-      }
-      else if(animal instanceof Mouse)
-      {
-          prey = (Mouse) animal;
-      }
-      
-      return prey;
-    }
-    
-    /**
-     * @return false if it is foggy and fox cannot see.
-     */
-    protected boolean isFogImmune()
-    {
-        if(Simulator.getWeather().getFog())
-        {
+        if( (0 <= time) && (time <= 6)) {
             return false;
         }
-        else
-        {
+        else {
             return true;
         }
     }
@@ -148,6 +125,6 @@ public class Fox extends Predator
     {
         return BREEDING_AGE;
     }
-    
+
     
 }

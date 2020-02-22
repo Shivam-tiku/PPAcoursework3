@@ -19,9 +19,17 @@ public class Simulator
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
     // The probability that a fox will be created in any given grid position.
-    private static final double FOX_CREATION_PROBABILITY = 0.02;
+    private static  double FOX_CREATION_PROBABILITY = 0.02;
     // The probability that a rabbit will be created in any given grid position.
-    private static final double RABBIT_CREATION_PROBABILITY = 0.08;    
+    private static  double RABBIT_CREATION_PROBABILITY = 0.08;
+    // The probability that a wolf will be created in any given grid position.    
+    private static double WOLF_CREATION_PROBABILITY = 0.01;
+     // The probability that a hunter will be created in any given grid position.
+    private static double HUNTER_CREATION_PROBABILITY = 0.002;
+    // The probability that grass will be created in any given grid position.
+    private static double GRASS_CREATION_PROBABILITY = 1;
+    
+    
 
     // List of actors in the field.
     private List<Actor> actors;
@@ -54,13 +62,17 @@ public class Simulator
             width = DEFAULT_WIDTH;
         }
         
-        actors = new ArrayList<>();
+        actors = new ArrayList<Actor>();
         field = new Field(depth, width);
 
         // Create a view of the state of each location in the field.
         view = new SimulatorView(depth, width);
         view.setColor(Rabbit.class, Color.ORANGE);
         view.setColor(Fox.class, Color.BLUE);
+        view.setColor(Wolf.class, Color.BLACK);
+        view.setColor(Hunter.class, Color.RED);
+        view.setColor(Grass.class, Color.GREEN);
+        
         
         // Setup a valid starting point.
         reset();
@@ -96,23 +108,26 @@ public class Simulator
     public void simulateOneStep()
     {
         step++;
-
-        // Provide space for newborn actors.
-        List<Actor> newActors = new ArrayList<>();        
-        // Let all rabbits act.
-        for(Iterator<Actor> it = actors.iterator(); it.hasNext(); ) {
+        //provide space for newborn actors.
+        List<Actor> newActors = new ArrayList <Actor>();
+        //let all actors act.
+        for(Iterator<Actor> it = actors.iterator();it.hasNext();) {
             Actor actor = it.next();
             actor.act(newActors);
-            if(! actor.isAlive()) {
-                it.remove();
+            if (actor instanceof Animal)     // check if actor is an animal
+            {
+                Animal animal =(Animal) actor;
+                if(! animal.isAlive()) {
+                    it.remove();
+                }
             }
         }
-               
-        // Add the newly born foxes and rabbits to the main lists.
+        // Add all the newly born animals to the main lists
         actors.addAll(newActors);
-
+        
         view.showStatus(step, field);
     }
+    
         
     /**
      * Reset the simulation to a starting position.
@@ -128,6 +143,34 @@ public class Simulator
     }
     
     /**
+     * get simulatorview
+     * @return simulatorview
+     */
+    public SimulatorView getSimulatorView()
+    {
+        return view;
+    }
+    
+    /**
+     * get field
+     * @return field
+     */
+    public Field getField()
+    {
+        return field;
+    }
+    
+    /**
+     * get step
+     * @return int step
+     */
+    public int getStep()
+    {
+        return step;
+    }
+  
+    
+    /**
      * Randomly populate the field with foxes and rabbits.
      */
     private void populate()
@@ -138,30 +181,33 @@ public class Simulator
             for(int col = 0; col < field.getWidth(); col++) {
                 if(rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Fox fox = new Fox(true, field, location);
+                    Fox fox = new Fox(true, field, location, true);
                     actors.add(fox);
                 }
                 else if(rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Rabbit rabbit = new Rabbit(true, field, location);
+                    Rabbit rabbit = new Rabbit(true, field, location, true);
                     actors.add(rabbit);
+                }
+                else if (rand.nextDouble() <= WOLF_CREATION_PROBABILITY) {
+                    Location location = new Location (row, col);
+                    Wolf wolf = new Wolf(true, field, location, true);
+                    actors.add(wolf);
+                }
+                 else if(rand.nextDouble() <= HUNTER_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Hunter hunter = new Hunter(field, location);
+                    actors.add(hunter);
+                }
+                else if(rand.nextDouble() <= GRASS_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Grass grass = new Grass(true, field, location);
+                    actors.add(grass);
                 }
                 // else leave the location empty.
             }
         }
     }
     
-    /**
-     * Pause for a given time.
-     * @param millisec  The time to pause for, in milliseconds
-     */
-    private void delay(int millisec)
-    {
-        try {
-            Thread.sleep(millisec);
-        }
-        catch (InterruptedException ie) {
-            // wake up
-        }
-    }
+    
 }
